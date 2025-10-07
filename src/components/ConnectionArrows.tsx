@@ -34,15 +34,16 @@ interface Connection {
 
 interface ConnectionArrowsProps {
   collections: Collection[];
+  zoomLevel?: number;
 }
 
 const CARD_WIDTH = 256;
 const CARD_HEIGHT = 120;
 
-export default function ConnectionArrows({ collections }: ConnectionArrowsProps) {
+export default function ConnectionArrows({ collections, zoomLevel = 1 }: ConnectionArrowsProps) {
   const [connections, setConnections] = useState<Connection[]>([]);
 
-  // Recalculate connections whenever collections change
+  // Recalculate connections whenever collections or zoom changes
   useEffect(() => {
     const newConnections: Connection[] = [];
 
@@ -52,37 +53,9 @@ export default function ConnectionArrows({ collections }: ConnectionArrowsProps)
           if (field.type === 'reference' && field.referenceCollection) {
             const targetCollection = collections.find(col => col.id === field.referenceCollection);
             if (targetCollection) {
-              // Get current positions from DOM elements for real-time updates
-              const fromElement = window.document.querySelector(`[data-collection-id="${collection.id}"]`) as HTMLElement;
-              const toElement = window.document.querySelector(`[data-collection-id="${targetCollection.id}"]`) as HTMLElement;
-              
-              let fromPos = collection.position;
-              let toPos = targetCollection.position;
-              
-              // Use actual DOM positions if available (for real-time drag updates)
-              if (fromElement) {
-                const rect = fromElement.getBoundingClientRect();
-                const container = fromElement.closest('.canvas-container');
-                if (container) {
-                  const containerRect = container.getBoundingClientRect();
-                  fromPos = {
-                    x: rect.left - containerRect.left,
-                    y: rect.top - containerRect.top
-                  };
-                }
-              }
-              
-              if (toElement) {
-                const rect = toElement.getBoundingClientRect();
-                const container = toElement.closest('.canvas-container');
-                if (container) {
-                  const containerRect = container.getBoundingClientRect();
-                  toPos = {
-                    x: rect.left - containerRect.left,
-                    y: rect.top - containerRect.top
-                  };
-                }
-              }
+              // Use collection positions directly - CSS transform handles scaling
+              const fromPos = collection.position;
+              const toPos = targetCollection.position;
 
               // Calculate connection points on card edges
               const fromCenterX = fromPos.x + CARD_WIDTH / 2;
@@ -144,104 +117,6 @@ export default function ConnectionArrows({ collections }: ConnectionArrowsProps)
     setConnections(newConnections);
   }, [collections]);
 
-  // Update connections on mouse move for real-time drag updates
-  useEffect(() => {
-    let animationFrame: number;
-
-    const updateConnections = () => {
-      const newConnections: Connection[] = [];
-
-      collections.forEach(collection => {
-        collection.documents.forEach(document => {
-          document.fields.forEach(field => {
-            if (field.type === 'reference' && field.referenceCollection) {
-              const targetCollection = collections.find(col => col.id === field.referenceCollection);
-              if (targetCollection) {
-                // Always use DOM positions for real-time updates
-                const fromElement = window.document.querySelector(`[data-collection-id="${collection.id}"]`) as HTMLElement;
-                const toElement = window.document.querySelector(`[data-collection-id="${targetCollection.id}"]`) as HTMLElement;
-                
-                if (fromElement && toElement) {
-                  const container = fromElement.closest('.canvas-container');
-                  if (container) {
-                    const containerRect = container.getBoundingClientRect();
-                    const fromRect = fromElement.getBoundingClientRect();
-                    const toRect = toElement.getBoundingClientRect();
-                    
-                    const fromPos = {
-                      x: fromRect.left - containerRect.left,
-                      y: fromRect.top - containerRect.top
-                    };
-                    const toPos = {
-                      x: toRect.left - containerRect.left,
-                      y: toRect.top - containerRect.top
-                    };
-
-                    // Calculate connection points
-                    const fromCenterX = fromPos.x + CARD_WIDTH / 2;
-                    const fromCenterY = fromPos.y + CARD_HEIGHT / 2;
-                    const toCenterX = toPos.x + CARD_WIDTH / 2;
-                    const toCenterY = toPos.y + CARD_HEIGHT / 2;
-
-                    const dx = toCenterX - fromCenterX;
-                    const dy = toCenterY - fromCenterY;
-
-                    let fromX, fromY, toX, toY;
-
-                    if (Math.abs(dx) > Math.abs(dy)) {
-                      if (dx > 0) {
-                        fromX = fromPos.x + CARD_WIDTH;
-                        fromY = fromCenterY;
-                        toX = toPos.x;
-                        toY = toCenterY;
-                      } else {
-                        fromX = fromPos.x;
-                        fromY = fromCenterY;
-                        toX = toPos.x + CARD_WIDTH;
-                        toY = toCenterY;
-                      }
-                    } else {
-                      if (dy > 0) {
-                        fromX = fromCenterX;
-                        fromY = fromPos.y + CARD_HEIGHT;
-                        toX = toCenterX;
-                        toY = toPos.y;
-                      } else {
-                        fromX = fromCenterX;
-                        fromY = fromPos.y;
-                        toX = toCenterX;
-                        toY = toPos.y + CARD_HEIGHT;
-                      }
-                    }
-
-                    newConnections.push({
-                      fromId: collection.id,
-                      toId: targetCollection.id,
-                      fieldName: field.name,
-                      fromPos: { x: fromX, y: fromY },
-                      toPos: { x: toX, y: toY }
-                    });
-                  }
-                }
-              }
-            }
-          });
-        });
-      });
-
-      setConnections(newConnections);
-      animationFrame = requestAnimationFrame(updateConnections);
-    };
-
-    // Start continuous updates
-    animationFrame = requestAnimationFrame(updateConnections);
-
-    return () => {
-      if (animationFrame) {
-        cancelAnimationFrame(animationFrame);
-      }
-    };
-  }, [collections]);
 
   if (connections.length === 0) return null;
 

@@ -243,7 +243,7 @@ export default function DatabaseDesigner({
         >
 
           {/* Connection Arrows */}
-          <ConnectionArrows collections={collections} />
+          <ConnectionArrows collections={collections} zoomLevel={zoomLevel} />
 
           {/* Collections */}
           {collections.map((collection) => (

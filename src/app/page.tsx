@@ -4,6 +4,7 @@ import { useState } from 'react';
 import DatabaseDesigner from '@/components/DatabaseDesigner';
 import Header from '@/components/Header';
 import Sidebar from '@/components/Sidebar';
+import LandingPage from '@/components/LandingPage';
 
 interface Collection {
   id: string;
@@ -30,11 +31,20 @@ interface Field {
 export default function Home() {
   const [collections, setCollections] = useState<Collection[]>([]);
   const [selectedCollection, setSelectedCollection] = useState<Collection | null>(null);
+  const [showDesigner, setShowDesigner] = useState<boolean>(false);
 
   const handleImport = (importedCollections: Collection[]) => {
     setCollections(importedCollections);
     setSelectedCollection(null);
   };
+
+  const handleGetStarted = () => {
+    setShowDesigner(true);
+  };
+
+  if (!showDesigner) {
+    return <LandingPage onGetStarted={handleGetStarted} />;
+  }
 
   return (
     <div className="h-screen flex flex-col bg-gray-50 dark:bg-gray-900">

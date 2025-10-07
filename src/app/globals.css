@@ -43,3 +43,15 @@ body {
 * {
   transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
 }
+
+/* Prevent browser navigation gestures on canvas */
+.canvas-container {
+  overscroll-behavior: none;
+  touch-action: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Prevent horizontal swipe navigation globally when interacting with canvas */
+html {
+  overscroll-behavior-x: none;
+}

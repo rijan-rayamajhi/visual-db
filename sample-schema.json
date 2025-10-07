@@ -1,0 +1,38 @@
+{
+  "users": {
+    "user123": {
+      "name": "John Doe",
+      "email": "john@example.com",
+      "age": "30",
+      "isActive": "true"
+    },
+    "user456": {
+      "name": "Jane Smith",
+      "email": "jane@example.com",
+      "age": "25",
+      "isActive": "false"
+    }
+  },
+  "posts": {
+    "post001": {
+      "title": "My First Post",
+      "content": "This is the content of my first post",
+      "authorId": "user123",
+      "publishedAt": "2024-01-15"
+    },
+    "post002": {
+      "title": "Another Post",
+      "content": "More content here",
+      "authorId": "user456",
+      "publishedAt": "2024-01-16"
+    }
+  },
+  "comments": {
+    "comment001": {
+      "text": "Great post!",
+      "authorId": "user456",
+      "postId": "post001",
+      "createdAt": "2024-01-15T10:30:00Z"
+    }
+  }
+}

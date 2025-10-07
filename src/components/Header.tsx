@@ -73,9 +73,13 @@ export default function Header({ collections = [], onImport }: HeaderProps) {
       reader.onload = (e) => {
         try {
           const schema = JSON.parse(e.target?.result as string);
+          
+          // Handle different schema formats
+          let collections: Collection[] = [];
+          
           if (schema.collections && Array.isArray(schema.collections)) {
-            // Convert old format to new format if needed
-            const collections = schema.collections.map((collection: { id: string; name: string; fields?: Field[]; documents?: Document[]; position: { x: number; y: number } }) => {
+            // Old format with collections array
+            collections = schema.collections.map((collection: { id: string; name: string; fields?: Field[]; documents?: Document[]; position: { x: number; y: number } }) => {
               // If it has the old format (fields directly on collection)
               if (collection.fields && !collection.documents) {
                 return {
@@ -95,13 +99,43 @@ export default function Header({ collections = [], onImport }: HeaderProps) {
               // Already in new format
               return collection;
             });
-            onImport?.(collections);
           } else {
-            alert('Invalid schema format');
+            // New simplified format: {collectionName: {documentName: {fieldName: value}}}
+            collections = Object.entries(schema).map(([collectionName, collectionData], index) => {
+              const documents: Document[] = Object.entries(collectionData as Record<string, Record<string, string>>).map(([documentName, documentData], docIndex) => {
+                const fields: Field[] = Object.entries(documentData).map(([fieldName, fieldValue], fieldIndex) => ({
+                  id: `field-${docIndex}-${fieldIndex}`,
+                  name: fieldName,
+                  value: String(fieldValue),
+                  type: typeof fieldValue === 'number' ? 'number' : 
+                        typeof fieldValue === 'boolean' ? 'boolean' : 'string'
+                }));
+                
+                return {
+                  id: `doc-${docIndex}`,
+                  name: documentName,
+                  fields
+                };
+              });
+              
+              return {
+                id: `collection-${index}`,
+                name: collectionName,
+                documents,
+                position: { x: 100 + (index * 300), y: 100 }
+              };
+            });
+          }
+          
+          if (collections.length > 0) {
+            onImport?.(collections);
+            alert(`Successfully imported ${collections.length} collection(s)`);
+          } else {
+            alert('No valid collections found in the schema');
           }
         } catch (error) {
           console.error('Error parsing JSON:', error);
-          alert('Error parsing JSON file');
+          alert('Error parsing JSON file. Please ensure it\'s a valid JSON format.');
         }
       };
       reader.readAsText(file);
@@ -118,6 +152,7 @@ export default function Header({ collections = [], onImport }: HeaderProps) {
         type="file"
         ref={fileInputRef}
         accept=".json"
+        onChange={handleFileImport}
         style={{ display: 'none' }}
       />
       

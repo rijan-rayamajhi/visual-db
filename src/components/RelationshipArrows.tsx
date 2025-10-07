@@ -143,8 +143,8 @@ export default function RelationshipArrows({ collections, draggedCollectionId, d
       </defs>
       
       {relations.map((relation: Relationship, index: number) => {
-        const dx = relation.toPosition.x - relation.fromPosition.x;
-        const dy = relation.toPosition.y - relation.fromPosition.y;
+        // const dx = relation.toPosition.x - relation.fromPosition.x;
+        // const dy = relation.toPosition.y - relation.fromPosition.y;
         // const distance = Math.sqrt(dx * dx + dy * dy);
         
         // Always use straight lines for simplicity and reliability

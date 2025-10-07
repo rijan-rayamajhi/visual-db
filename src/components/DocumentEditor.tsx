@@ -286,6 +286,19 @@ export default function DocumentEditor({ collection, allCollections, onUpdate, o
                   </label>
                   <input
                     type="text"
+                    value={newField.name || ''}
+                    onChange={(e) => setNewField({ ...newField, name: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="e.g., name, email, age"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Field Value
+                  </label>
+                  <input
+                    type="text"
                     value={newField.value || ''}
                     onChange={(e) => setNewField({ ...newField, value: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 
 interface Collection {
   id: string;
@@ -47,7 +47,6 @@ export default function CollectionCard({
 }: CollectionCardProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
-  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const cardRef = useRef<HTMLDivElement>(null);
 
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -62,7 +61,7 @@ export default function CollectionCard({
     onDragStart?.(collection.id);
   };
 
-  const handleMouseMove = (e: MouseEvent) => {
+  const handleMouseMove = useCallback((e: MouseEvent) => {
     if (!isDragging) return;
     
     const newPosition = {
@@ -75,18 +74,16 @@ export default function CollectionCard({
       x: newPosition.x - collection.position.x,
       y: newPosition.y - collection.position.y
     };
-    setDragOffset(offset);
     
     // Immediate synchronous updates for real-time arrow tracking
     onDragMove?.(collection.id, offset);
     onMove(collection.id, newPosition);
-  };
+  }, [isDragging, dragStart, collection.position, collection.id, onDragMove, onMove]);
 
-  const handleMouseUp = () => {
+  const handleMouseUp = useCallback(() => {
     setIsDragging(false);
-    setDragOffset({ x: 0, y: 0 });
     onDragEnd?.();
-  };
+  }, [onDragEnd]);
 
   useEffect(() => {
     if (isDragging) {
@@ -100,30 +97,6 @@ export default function CollectionCard({
     }
   }, [isDragging, dragStart, handleMouseMove, handleMouseUp]);
 
-  const getFieldTypeIcon = (type: string) => {
-    switch (type) {
-      case 'string':
-        return 'T';
-      case 'number':
-        return '#';
-      case 'boolean':
-        return 'B';
-      case 'timestamp':
-        return 'D';
-      case 'array':
-        return '[]';
-      case 'map':
-        return '{}';
-      case 'reference':
-        return '→';
-      case 'geopoint':
-        return 'G';
-      case 'null':
-        return '∅';
-      default:
-        return 'F';
-    }
-  };
 
   return (
     <div

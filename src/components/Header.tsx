@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import React, { useRef } from 'react';
 import { useTheme } from '@/contexts/ThemeContext';
 
 interface Collection {
@@ -75,7 +75,7 @@ export default function Header({ collections = [], onImport }: HeaderProps) {
           const schema = JSON.parse(e.target?.result as string);
           if (schema.collections && Array.isArray(schema.collections)) {
             // Convert old format to new format if needed
-            const collections = schema.collections.map((collection: any) => {
+            const collections = schema.collections.map((collection: { id: string; name: string; fields?: Field[]; documents?: Document[]; position: { x: number; y: number } }) => {
               // If it has the old format (fields directly on collection)
               if (collection.fields && !collection.documents) {
                 return {
@@ -83,7 +83,7 @@ export default function Header({ collections = [], onImport }: HeaderProps) {
                   documents: collection.fields.length > 0 ? [{
                     id: 'default-doc',
                     name: 'Sample Document',
-                    fields: collection.fields.map((field: any) => ({
+                    fields: collection.fields.map((field: Field) => ({
                       ...field,
                       value: field.value || '',
                       referenceCollection: field.referenceCollection
@@ -100,6 +100,7 @@ export default function Header({ collections = [], onImport }: HeaderProps) {
             alert('Invalid schema format');
           }
         } catch (error) {
+          console.error('Error parsing JSON:', error);
           alert('Error parsing JSON file');
         }
       };

@@ -98,7 +98,7 @@ export default function CollectionCard({
         document.removeEventListener('mouseup', handleMouseUp);
       };
     }
-  }, [isDragging, dragStart]);
+  }, [isDragging, dragStart, handleMouseMove, handleMouseUp]);
 
   const getFieldTypeIcon = (type: string) => {
     switch (type) {

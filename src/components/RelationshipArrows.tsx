@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import React from 'react';
 
 interface Collection {
   id: string;
@@ -145,7 +145,7 @@ export default function RelationshipArrows({ collections, draggedCollectionId, d
       {relations.map((relation: Relationship, index: number) => {
         const dx = relation.toPosition.x - relation.fromPosition.x;
         const dy = relation.toPosition.y - relation.fromPosition.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
+        // const distance = Math.sqrt(dx * dx + dy * dy);
         
         // Always use straight lines for simplicity and reliability
         const pathData = `M ${relation.fromPosition.x} ${relation.fromPosition.y} L ${relation.toPosition.x} ${relation.toPosition.y}`;

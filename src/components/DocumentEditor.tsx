@@ -112,26 +112,26 @@ export default function DocumentEditor({ collection, allCollections, onUpdate, o
     }
   };
 
-  const handleUpdateField = (fieldId: string, updates: Partial<Field>) => {
-    if (!selectedDocument) return;
+  // const handleUpdateField = (fieldId: string, updates: Partial<Field>) => {
+  //   if (!selectedDocument) return;
 
-    const updatedDocument = {
-      ...selectedDocument,
-      fields: selectedDocument.fields.map(field =>
-        field.id === fieldId ? { ...field, ...updates } : field
-      )
-    };
+  //   const updatedDocument = {
+  //     ...selectedDocument,
+  //     fields: selectedDocument.fields.map(field =>
+  //       field.id === fieldId ? { ...field, ...updates } : field
+  //     )
+  //   };
 
-    const updatedCollection = {
-      ...collection,
-      documents: collection.documents.map(doc =>
-        doc.id === selectedDocument.id ? updatedDocument : doc
-      )
-    };
+  //   const updatedCollection = {
+  //     ...collection,
+  //     documents: collection.documents.map(doc =>
+  //       doc.id === selectedDocument.id ? updatedDocument : doc
+  //     )
+  //   };
 
-    onUpdate(updatedCollection);
-    setSelectedDocument(updatedDocument);
-  };
+  //   onUpdate(updatedCollection);
+  //   setSelectedDocument(updatedDocument);
+  // };
 
   const handleDeleteField = (fieldId: string) => {
     if (!selectedDocument) return;
@@ -286,19 +286,6 @@ export default function DocumentEditor({ collection, allCollections, onUpdate, o
                   </label>
                   <input
                     type="text"
-                    value={newField.name || ''}
-                    onChange={(e) => setNewField({ ...newField, name: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="e.g., name, email, age"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Value
-                  </label>
-                  <input
-                    type="text"
                     value={newField.value || ''}
                     onChange={(e) => setNewField({ ...newField, value: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -408,7 +395,7 @@ export default function DocumentEditor({ collection, allCollections, onUpdate, o
               {selectedDocument.fields.length === 0 && (
                 <div className="text-center text-gray-500 dark:text-gray-400 py-8">
                   <p>No fields in this document</p>
-                  <p className="text-sm mt-1">Click "Add Field" to create the first field</p>
+                  <p className="text-sm mt-1">Click &quot;Add Field&quot; to create the first field</p>
                 </div>
               )}
             </div>
@@ -424,7 +411,7 @@ export default function DocumentEditor({ collection, allCollections, onUpdate, o
         {collection.documents.length === 0 && (
           <div className="p-4 text-center text-gray-500 dark:text-gray-400">
             <p>No documents in this collection</p>
-            <p className="text-sm mt-1">Click "Add Document" to create the first document</p>
+            <p className="text-sm mt-1">Click &quot;Add Document&quot; to create the first document</p>
           </div>
         )}
       </div>

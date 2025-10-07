@@ -34,7 +34,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       if (savedTheme === 'light' || savedTheme === 'dark') {
         setTheme(savedTheme);
       }
-    } catch (e) {
+    } catch {
       // localStorage not available (SSR)
       setTheme('light');
     }
